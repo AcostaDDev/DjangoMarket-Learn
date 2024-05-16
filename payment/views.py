@@ -43,7 +43,7 @@ class PaymentView(View):
                         'name': item.product.name
                     },
                 },
-                'quantity': item.quantity,
+                'quantity': 1,
             })
 
         session = stripe.checkout.Session.create(**session_data)

@@ -21,7 +21,6 @@ class Cart:
             cart[str(product.id)]['product'] = product
         for item in cart.values():
             item['price'] = Decimal(item['price'])
-            item['total_price'] = item['price'] * item['quantity']
             yield item
             # --> Yield es un generador que devuelve el diccionario anterior con los valores añadidos y
             # actualizados
@@ -34,13 +33,9 @@ class Cart:
         product_id = str(product.id)
         if product_id not in self.cart:
             self.cart[product_id] = {
-                'quantity': 0,
+                'quantity': 1,
                 'price': str(product.price)
             }
-        if override_quantity:
-            self.cart[product_id]['quantity'] = quantity
-        else:
-            self.cart[product_id]['quantity'] += quantity
         self.save()
 
     def save(self):
@@ -57,10 +52,4 @@ class Cart:
         self.save()
 
     def get_total_price(self):
-        return sum(Decimal(item['price']) * item['quantity'] for item in self.cart.values())
-
-    # def remove_quantity(self, product: Product, quantity=1):
-    #     product_id = str(product.id)
-    #     if product_id in self.cart and self.cart[product_id]['quantity'] >= quantity:
-    #         self.cart[product_id]['quantity'] -= quantity
-    #         self.save()
+        return sum(Decimal(item['price']) for item in self.cart.values())

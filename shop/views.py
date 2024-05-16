@@ -3,7 +3,6 @@ from django.template.response import TemplateResponse
 from django.views import View
 
 from A_DB.models.shop_models import Product, Category
-from cart.forms import CartAddProductForm
 
 
 class ShopView(View):
@@ -19,7 +18,7 @@ class ShopView(View):
         context = {
             'category': category,
             'categories': categories,
-            'products': products
+            'products': products,
         }
 
         return TemplateResponse(request, 'shop/product/list.html', context)
@@ -28,11 +27,9 @@ class ShopView(View):
 class ProductDetailView(View):
     def get(self, request, slug: str, pk: str):
         product = get_object_or_404(Product, slug=slug, id=pk)
-        cart_product_form = CartAddProductForm()
 
         context = {
             'product': product,
-            'cart_product_form': cart_product_form
         }
 
         return TemplateResponse(request, 'shop/product/detail.html', context)

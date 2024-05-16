@@ -1,7 +1,6 @@
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, get_object_or_404
 from django.template.response import TemplateResponse
-from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from django.views import View
@@ -32,8 +31,7 @@ class OrderCreateView(View):
                 OrderItem.objects.create(
                     order=order,
                     product=item['product'],
-                    price=item['price'],
-                    quantity=item['quantity']
+                    price=item['price']
                 )
             cart.clear()
             order_created.delay(order.id)
