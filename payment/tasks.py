@@ -1,15 +1,18 @@
+# tasks.py
 from celery import shared_task
-from django.core.mail import send_mail, EmailMessage
-
+from django.core.mail import EmailMessage
 from A_DB.models.orders_models import Order
+from utils.PDF_utils import generate_invoice_pdf
 
 
 @shared_task
-def order_paid(order_id):        # No se acepta el objeto en crupo debido a que estos pueden cambiar, asi que se pasa solo el id y así la función se encarga de hacer la consulta a la bbdd
+def order_paid(order_id):
     order = Order.objects.get(id=order_id)
     subject = f'Order id: {order.id}'
     customer_email = order.email
-    # pdf_path = generate_invoice_pdf(invoice)
+
+    # Generar el PDF
+    pdf_path = generate_invoice_pdf(order)
 
     email = EmailMessage(
         'Tu Factura de Compra',
@@ -17,7 +20,9 @@ def order_paid(order_id):        # No se acepta el objeto en crupo debido a que 
         'tusmuertis@elprimo.com',
         [customer_email],
     )
-    # email.attach_file(pdf_path)
 
+    # Adjuntar el archivo PDF
+    email.attach_file(pdf_path)
     mail_sent = email.send()
     return mail_sent
+
