@@ -13,11 +13,11 @@ def order_paid(order_id):        # No se acepta el objeto en crupo debido a que 
 
     email = EmailMessage(
         'Tu Factura de Compra',
-        'Gracias por tu compra. Adjuntamos tu factura en formato PDF.',
-        'from@example.com',
+        f'Gracias {order.first_name} por tu compra. Adjuntamos tu factura en formato PDF.',
+        'tusmuertis@elprimo.com',
         [customer_email],
     )
     # email.attach_file(pdf_path)
 
-    mail_sent = send_mail(subject=subject, message=email, from_email='admin@myshop.com', recipient_list=[customer_email])
+    mail_sent = email.send()
     return mail_sent
