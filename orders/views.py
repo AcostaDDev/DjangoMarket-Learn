@@ -7,7 +7,6 @@ from django.views import View
 
 from cart.cart import Cart
 
-from .tasks import order_created
 from .forms import OrderCreateForm
 from A_DB.models.orders_models import Order, OrderItem
 
@@ -34,7 +33,6 @@ class OrderCreateView(View):
                     price=item['price']
                 )
             cart.clear()
-            order_created.delay(order.id)
             request.session['order_id'] = order.id
             return redirect(reverse('payment:process'))
 

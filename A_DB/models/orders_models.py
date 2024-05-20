@@ -12,6 +12,7 @@ class Order(models.Model):
     phone_number = models.CharField(max_length=20, null=True,blank=True)
     postal_code = models.CharField(max_length=20)
     city = models.CharField(max_length=100)
+    additional_info = models.TextField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField(default=False)

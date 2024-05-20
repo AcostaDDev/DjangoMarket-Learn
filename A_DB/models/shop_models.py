@@ -35,21 +35,32 @@ def upload_image_to(instance, filename):
 
 
 class Product(models.Model):
+    class Genre(models.Choices):
+        none = 'None'
+        male = 'Male'
+        female = 'Female'
 
-    category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
-    name = models.CharField(max_length=200)
+    category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE, verbose_name='categoría')
+    name = models.CharField(max_length=200, verbose_name='nombre')
     slug = models.SlugField(max_length=200)
-    description = models.TextField(blank=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    available = models.BooleanField(default=True)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    description = models.TextField(blank=True, verbose_name='descripción')
+    genre = models.CharField(choices=Genre.choices, default=Genre.none, max_length=20, verbose_name='genero')
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='precio')
+    available = models.BooleanField(default=True, verbose_name='disponible')
+    created = models.DateTimeField(auto_now_add=True, verbose_name='creado')
+    updated = models.DateTimeField(auto_now=True, verbose_name='actualizado')
+    outstanding = models.BooleanField(default=False, verbose_name='destacado')
+    sold = models.BooleanField(default=False, verbose_name='vendido')
+    is_artist_product = models.BooleanField(default=False, verbose_name='producto de artistas')
 
     class Meta:
         ordering = ['name']
         indexes = [
             models.Index(fields=['id', 'slug']),
             models.Index(fields=['name']),
+            models.Index(fields=['outstanding']),
+            models.Index(fields=['sold']),
+            models.Index(fields=['is_artist_product']),
             models.Index(fields=['-created']),
         ]
 
@@ -62,12 +73,19 @@ class Product(models.Model):
     def get_absolute_url(self):
         return reverse('shop:product_detail', args=[self.slug, self.id])
 
+    def get_image_url(self):
+        return self.images.first().image.url
+
 
 class Image(models.Model):
     product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to=upload_image_to, null=True, blank=True)
 
     class Meta:
+        ordering = ['product']
+        indexes = [
+            models.Index(fields=['product']),
+        ]
         verbose_name = 'image'
         verbose_name_plural = 'images'
 
