@@ -1,3 +1,12 @@
+'''
+    @author : David Acosta
+    Date: 22/05/2024
+
+    Configuración del webhook de Stripe
+
+    Django version: 5.0.6
+    Stripe version: 2024-04-10
+'''
 import stripe
 
 from django.conf import settings
@@ -13,6 +22,17 @@ from .tasks import order_paid
 # csrf evita ataques desde fuera de la web, hacemos una excepción ya que stripe no es de nuestra web pero es seguro
 @csrf_exempt
 def stripe_webhook(request):
+    """
+    Si el pago ha sido realizado con exito, se actualiza el estado de la orden y se elimina el carrito
+    por el contrario si ha sido denegado devuelve un status 400
+
+    E/S:
+        E -> request
+        S -> HttpResponse
+
+    if stripe.Webhook.construct_event == fail:
+        return HttpResponse(status=400)
+    """
     payload = request.body
     sig_header = request.META['HTTP_STRIPE_SIGNATURE']
     event = None

@@ -1,3 +1,11 @@
+"""
+    @author : David Acosta
+    Date: 22/05/2024
+
+    Vistas para procesar el pedido
+
+    Django version: 5.0.6
+"""
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, get_object_or_404
 from django.template.response import TemplateResponse
@@ -13,15 +21,28 @@ from A_DB.models.orders_models import Order, OrderItem
 
 class OrderCreateView(View):
     def get(self, request):
+        """
+        Renderiza la template que muestra los productos del pedido
+
+        E/S:
+            E -> request
+            S -> Template con el formulario
+        """
         cart = Cart(request)
-        form = OrderCreateForm
+        form = OrderCreateForm()
         context = {
-            'cart': cart,
             'form': form
         }
         return TemplateResponse(request, 'orders/order/create.html', context)
 
     def post(self, request):
+        """
+        Crea el pedido con los datos obtenidos del fomulario
+
+        E/S:
+            E -> request
+            S -> Redirect a la vista de procesamiento de pago
+        """
         cart = Cart(request)
         form = OrderCreateForm(request.POST)
         if form.is_valid():
